@@ -68,6 +68,43 @@ internal class ChoreRepository : BaseRepository
         }
     }
 
+    public List<Chore> GetUassignedChores()
+    {
+        using (SqlConnection conn = Connection)
+        {
+            conn.Open();
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = @"select c.Id, c.Name
+                                    from chore c
+                                    left join RoommateChore rmc
+                                    on c.Id = rmc.ChoreId
+                                    where rmc.ChoreId is null;";
+                SqlDataReader reader = cmd.ExecuteReader();
+                List<Chore> chores = new List<Chore>();
+
+                while (reader.Read())
+                {
+                    int idColumnPosition = reader.GetOrdinal("Id");
+                    int IdValue = reader.GetInt32(idColumnPosition);
+                    int nameColumnPosition = reader.GetOrdinal("Name");
+                    string nameValue = reader.GetString(nameColumnPosition);
+
+                    Chore chore = new Chore
+                    {
+                        Id = IdValue,
+                        Name = nameValue
+                    };
+
+                    chores.Add(chore);
+                }
+
+                reader.Close();
+                return chores;
+            }
+        }
+    }
+
     public void Insert(Chore chore)
     {
         using (SqlConnection conn = Connection)
