@@ -122,4 +122,22 @@ internal class ChoreRepository : BaseRepository
             }
         }
     }
+
+    public void AssignChore(int roommateId, int choreId)
+    {
+        using (SqlConnection conn = Connection)
+        {
+            conn.Open();
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = @"insert into RoommateChore (RoommateId, ChoreId)
+                                    values (@roommateId, @choreId)";
+                cmd.Parameters.AddWithValue("@roommateId", roommateId);
+                cmd.Parameters.AddWithValue("@choreId", choreId);
+
+                cmd.ExecuteScalar();
+            }
+            
+        }
+    }
 }
