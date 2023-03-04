@@ -135,9 +135,41 @@ internal class ChoreRepository : BaseRepository
                 cmd.Parameters.AddWithValue("@roommateId", roommateId);
                 cmd.Parameters.AddWithValue("@choreId", choreId);
 
-                cmd.ExecuteScalar();
+                cmd.ExecuteNonQuery();
             }
             
+        }
+    }
+
+    public void Update(Chore chore)
+    {
+        using (SqlConnection conn = Connection)
+        {
+            conn.Open();
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = @"update Chore
+                                    set Name = @name
+                                    where Id = @id";
+                cmd.Parameters.AddWithValue("@name", chore.Name);
+                cmd.Parameters.AddWithValue("@id", chore.Id);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+    }
+
+    public void Delete(int id)
+    {
+        using (SqlConnection conn = Connection)
+        {
+            conn.Open();
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = "delete from Chore where Id = @id";
+                cmd.Parameters.AddWithValue("@id", id);
+                cmd.ExecuteNonQuery();
+            }
         }
     }
 }
